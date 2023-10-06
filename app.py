@@ -1,6 +1,5 @@
 from flask import Flask, request
 from datetime import datetime
-import pandas as pd
 app = Flask(__name__)
 
 # Get the current date in second since 01-01-2023
