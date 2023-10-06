@@ -1,6 +1,10 @@
 from flask import Flask, request
 from datetime import datetime
+import redis
 app = Flask(__name__)
+
+r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+r1 = redis.Redis(host='localhost', port=6379, db=1,decode_responses=True)
 
 # Get the current date in second since 01-01-2023
 time = datetime(2023,1,1).timestamp() 
@@ -8,6 +12,9 @@ time = datetime(2023,1,1).timestamp()
 # Tuple initialization
 add1 = ("Antoine","Christian",time,10)
 add2 = ("Antoine","Christian",time,200)
+
+r.set("add1",add1)
+r.set("add2",add2)
 
 # Add the hash in the tuple
 add1 = ("Antoine","Christian",time,10,hash(add1))
@@ -93,10 +100,13 @@ def addElement():
 
         # Add the element in a tuple
         add = (person1,person2,time,solde)
+        r.save(add)
         add = (person1,person2,solde,time,hash(add))
 
         # Add the tuple in the dictionary
         transaction.append(add)
+
+    
 
         return "You have successfully added a new element:" + str(add)
     return "You have not added a new element"
