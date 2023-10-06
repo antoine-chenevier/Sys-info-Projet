@@ -1,6 +1,8 @@
 from flask import Flask, request
 from datetime import datetime
 import redis
+import json
+
 app = Flask(__name__)
 
 r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
@@ -13,8 +15,13 @@ time = datetime(2023,1,1).timestamp()
 add1 = ("Antoine","Christian",time,10)
 add2 = ("Antoine","Christian",time,200)
 
-r.set("add1",add1)
-r.set("add2",add2)
+# Convert the tuples to JSON strings
+add1_json = json.dumps(add1)
+add2_json = json.dumps(add2)
+
+# Store the JSON strings in Redis
+r.set("add1", add1_json)
+r.set("add2", add2_json)
 
 # Dictionary initialization
 transaction = [add1,add2]
