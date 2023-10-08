@@ -16,6 +16,10 @@ add2 = ("Antoine","Christian",time,200)
 r.set("add1",add1)
 r.set("add2",add2)
 
+# Add the hash in the tuple
+add1 = ("Antoine","Christian",time,10,hash(add1))
+add2 = ("Antoine","Christian",time,200,hash(add2))
+
 # Dictionary initialization
 transaction = [add1,add2]
 
@@ -97,7 +101,8 @@ def addElement():
         # Add the element in a tuple
         add = (person1,person2,time,solde)
         r.save(add)
-    
+        add = (person1,person2,solde,time,hash(add))
+
         # Add the tuple in the dictionary
         transaction.append(add)
 
