@@ -116,7 +116,7 @@ Modify the amout of a transation directly in the data file
 
 #### 1- Identify the data file
 
-According to our code the transations are being stored in the a redis database which is an open-source, in-memory data structure that using key-value method of storing data.
+According to our code the transations are being stored in the a redis database which is an open-source, in-memory data structure NoSQL Database that using key-value method of storing data.
 
 Here it is used to store each transation using a key.
 
