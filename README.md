@@ -128,14 +128,22 @@ Here we will use a python scripts saved in the tests folder to connect to the re
 
 We start by running the python file in tests directory
 
-```bash
-python3 Ex4_attack_script.py
-```
-
 Then we connect to the redis DB
 
 ```bash
 redis-cli
+```
+
+
+Then We check the value of address 1 for example
+
+```bash
+127.0.0.1:6379> GET add1
+"[\"Antoine\", \"Christian\", 1672527600.0, 5]"
+```
+
+```bash
+python3 Ex4_attack_script.py
 ```
 
 Then we check the new keys values 
