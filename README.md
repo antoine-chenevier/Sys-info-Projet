@@ -158,3 +158,19 @@ We will see this output
 "[\"Antoine\", \"Christian\", 1672527600.0, 9034]"
 ```
 So as we can see the transation amout has been modified
+
+## Hash function in V2
+
+Here we chose the SHA-256 for hashing the transations, and we chose this functions for multiple reasons:
+
+  1- Security strength: SHA-256 is part of the SHA-2 family, which has shown to provide a higher level of security compared to its previous hashing algorithms
+
+  2- Collision resistance: the SHA-256 is designed to be collision-resistant meaning it's highly unlikely for two different inputs to produce the same hash value. 
+
+  3- Widely used: SHA-256 is widely used and supported in various programming languages and cyptographic libraries, which allows for easy impelentation.
+
+  4- Standardization: SHA-256 is standarized by NIST (National Institute of Standards and Technology), making it a widely accepted and recommendded choice for cryptographic applications.
+
+  5- Performance: Even though the SHA-256 is more complicated than some simpler hash functions, it still performs well in practice.
+
+  6- Bit length: SHA-256 produces a 256-bit hash value, providing a large hash space that is more resistant to brute-force attacks.

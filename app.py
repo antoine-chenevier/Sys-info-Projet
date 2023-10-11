@@ -14,19 +14,20 @@ time = datetime(2023,1,1).timestamp()
 
 # Tuple initialization
 # Structure of a transation (P1,P2,t,a,h)
-add1 = ("Antoine","Christian",time,10,None)
-add2 = ("Antoine","Christian",time,200,None)
+# add1 = ("Antoine","Christian",time,10,None)
+# add2 = ("Antoine","Christian",time,200,None)
 
-# Convert the tuples to JSON strings
-add1_json = json.dumps(add1)
-add2_json = json.dumps(add2)
+# # Convert the tuples to JSON strings
+# add1_json = json.dumps(add1)
+# add2_json = json.dumps(add2)
 
-# Store the JSON strings in Redis
-r.set("add1", add1_json)
-r.set("add2", add2_json)
+# # Store the JSON strings in Redis
+# r.set("add1", add1_json)
+# r.set("add2", add2_json)
 
-# Dictionary initialization
-transations = [add1,add2]
+# # Dictionary initialization
+# transations = [add1,add2]
+transations = []
 
 
 # Function to return all of the dictionary
@@ -34,6 +35,13 @@ transations = [add1,add2]
 def getList():
     if request.method == 'GET':
 
+        # Load transations from the database ONLY THE FIRST TIME
+        if len(transations) == 0:
+             for key in r.keys():
+                if key:
+                    transation = json.loads(r.get(key))
+                    transations.append(transation)
+       
         # Sort the dictionary by date
         transations.sort()
         return str(transations)
@@ -124,12 +132,12 @@ def addElement():
 # Endpoint to check if all the transations hash is correct
 @app.route("/check_integrity", methods=['GET'])
 def checkIntegrity():
-    for i,transaction_tuple in enumerate(transations):
-        recalculated_hash = compute_hash(transaction_tuple[:-1])
-        if recalculated_hash != transaction_tuple[:-1]:
+    for i, transaction_tuple in enumerate(transations):
+        recalculated_hash = compute_hash(transaction_tuple)
+        stored_hash = transaction_tuple[-1]  # Extract the stored hash from the tuple
+        if recalculated_hash != stored_hash:
             return f"Integrity check failed for transation {i+1}"
     return "Integrity check passed for all transations"
-# THIS IS STILL NOT WORKING !!!!
 
 
 # Method to compute the hash
