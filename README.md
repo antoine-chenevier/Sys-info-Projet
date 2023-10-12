@@ -194,3 +194,4 @@ Successfully deleted transation: ["christian", "enzo", 1672527600.0, 5221, "8b31
 ```
 
 After running this script we check again the display list endpoint and we will not find the transaction listed above 
+![image](https://github.com/antoine-chenevier/Sys-info-Projet/assets/117630923/cd50feb5-974c-4609-8ca4-5819da1d173d)
