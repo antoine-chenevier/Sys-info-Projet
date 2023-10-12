@@ -6,13 +6,13 @@ antoine chenevier
 email antoine.chenevier01@gmail.com
 
 christian Hasbani
-christian_hasbani@etu.u-bourgogne.fr
+email christian_hasbani@etu.u-bourgogne.fr
 
 ## curl
 
 Here are examples of `curl` commands to access the different routes in [app.py](./app.py)
 
-### route `/display_list`
+### Route `/display_list`
 
 ```python
 @app.route("/display_list", methods=['GET'])
@@ -25,7 +25,7 @@ curl -X GET http://localhost:5000/display_list
 
 Function to return all of the dictionary
 
-### route `/display_list/<Person>`
+### Route `/display_list/<Person>`
 
 ```python
 @app.route("/display_list/<Person>", methods=['GET'])
@@ -39,7 +39,7 @@ curl -X POST -d "Person=person" http://localhost:5000/display_list/<Person>
 
 Function to return all of the dictionary of a person
 
-### route `/display_solde/<Person>`
+### Route `/display_solde/<Person>`
 
 ```python
 @app.route("/display_solde/<Person>", methods=['GET'])
@@ -53,7 +53,7 @@ curl -X GET -d "Person=person" http://localhost:5000/display_solde/<Person>
 
 Function to display  the solde of a person
 
-### route `/add_element/`
+### Route `/add_element/`
 
 ```python
 @app.route("/add_element/", methods=['POST','GET'])
@@ -66,63 +66,33 @@ curl -X GET http://loccurl -X POST http://localhost:5000/add_element/ -d "p1=chr
 
 Function to add an element in the dictionary
 
-### route `/importeCSV`
+### Route `check_integrity`
 
 ```python
-@app.route("/importeCSV", methods=['GET'])
-def importeCSV():
-  ...
+@app.route("/check_integrity", methods=['GET'])
+def checkIntegrity():
 ```
 
 ```bash
-curl -d  "filePath=tab.csv" -X  GET http://localhost:5000/importeCSV
-
+curl -X GET http://localhost:5000/check_integrity
 ```
+Function to recalculate all the hashes of the transaction checking if there has been any modifications
 
-Function to import a CSV file
-
-### route `/hash_verification`
-
-```python
-@app.route("/hash_verification", methods=['GET'])
-def hash_vefication():
-  ...
-```
-
-```bash
-curl -X GET http://localhost:5000/hash_verification
-```
-
-Hash verification
-
-### route `/hash_correction`
-
-```python
-@app.route("/hash_correctionn", methods=['GET'])
-def hash_vefication():
-  ...
-```
-
-```bash
-curl -X GET http://localhost:5000/hash_correction
-```
-
-Hash correction
 
 ## Attacking the system in V1
 
 ### Objective 
-Modify the amout of a transation directly in the data file
+Modify the amout of a transaction directly in the data file
 
 #### 1- Identify the data file
 
-According to our code the transations are being stored in the a redis database which is an open-source, in-memory data structure NoSQL Database that using key-value method of storing data.
+According to our code the transactions are being stored in the a redis database which is an open-source, in-memory data structure NoSQL Database that using key-value method of storing data.
 
-Here it is used to store each transation using a key.
+Here it is used to store each transaction using a key.
 
-#### 2- Manually edit the amout of a transation in the file
+#### 2- Manually edit the amout of a transaction in the file
 
-Here we will use a python scripts saved in the tests folder to connect to the redis database and manually modify the saved transation keys
+Here we will use a python scripts saved in the tests folder to connect to the redis database and manually modify the saved transaction keys
 
 ### Testing the script
 
@@ -135,7 +105,7 @@ redis-cli
 ```
 
 
-Then We check the value of address 1 for example
+Then we check the value of address 1 for example
 
 ```bash
 127.0.0.1:6379> GET add1
@@ -157,11 +127,11 @@ We will see this output
 127.0.0.1:6379> GET add1
 "[\"Antoine\", \"Christian\", 1672527600.0, 9034]"
 ```
-So as we can see the transation amout has been modified
+So as we can see the transaction amout has been modified
 
 ## Hash function in V2
 
-Here we chose the SHA-256 for hashing the transations, and we chose this functions for multiple reasons:
+Here we chose the SHA-256 for hashing the transactions, and we chose this functions for multiple reasons:
 
   1- Security strength: SHA-256 is part of the SHA-2 family, which has shown to provide a higher level of security compared to its previous hashing algorithms
 
@@ -174,3 +144,53 @@ Here we chose the SHA-256 for hashing the transations, and we chose this functio
   5- Performance: Even though the SHA-256 is more complicated than some simpler hash functions, it still performs well in practice.
 
   6- Bit length: SHA-256 produces a 256-bit hash value, providing a large hash space that is more resistant to brute-force attacks.
+
+## Verifying that that the attack script doesn't work anymore on our system
+
+In exercise 4 we wrote a script to directly modify the data in the database.
+
+Let's test this script again after implementing the hash function into our application.
+
+Preview of the data before modifying it:
+```bash
+curl -X GET http://localhost:5000/display_list
+[('benjamin', 'enzo', 1672527600.0, 30, 'c5abeb869ac53b8f132ecaf92ae99da4d7e2474ee529746bbf0fa75ff81d1323'), 
+('calvin', 'enzo', 1672527600.0, 25, '71d3af238db66137346c9e8b884c320f0cc8ee2c14220aa0714052c1e8ed410e'), ('christian', 'antoine', 1672527600.0, 10, '7cc4f51e86fc29ed851d708f0f9f826dd7248cbf6e005d9e22401f8be163a829'), ('christian', 'enzo', 1672527600.0, 30, '8b311f3096ef6ff401dcae79b66dbd23edfa6324b4a07329b21680e7dce8e64b')]
+```
+And the data is the same in the DB
+
+Then we run the check integrity to verify that it is working:
+```bash
+curl -X GET http://localhost:5000/check_integrity
+Integrity check passed for all transactions
+```
+Then we run the python scripts in tests
+```bash
+python3 Ex4_attack_script.py
+transaction modified successfully.
+```
+
+we check the check intregrity endpoint again.
+```bash
+curl -X GET http://localhost:5000/check_integrity
+```
+
+And we will get a message
+
+```bash
+Integrity check failed for transaction 1
+```
+
+Indicating that the transactions in our application have been modfied 
+
+
+## Attack script that deletes a transaction
+
+In test folder we are going to use "Ex8_Delete_transactions.py"
+
+```bash
+python3 Ex8_Delete_transations.py
+Successfully deleted transation: ["christian", "enzo", 1672527600.0, 5221, "8b311f3096ef6ff401dcae79b66dbd23edfa6324b4a07329b21680e7dce8e64b"] from the DB
+```
+
+After running this script we check again the display list endpoint and we will not find the transaction listed above 

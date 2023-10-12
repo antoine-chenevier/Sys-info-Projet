@@ -12,21 +12,6 @@ r1 = redis.Redis(host='localhost', port=6379, db=1,decode_responses=True)
 # Get the current date in second since 01-01-2023
 time = datetime(2023,1,1).timestamp() 
 
-# Tuple initialization
-# Structure of a transation (P1,P2,t,a,h)
-# add1 = ("Antoine","Christian",time,10,None)
-# add2 = ("Antoine","Christian",time,200,None)
-
-# # Convert the tuples to JSON strings
-# add1_json = json.dumps(add1)
-# add2_json = json.dumps(add2)
-
-# # Store the JSON strings in Redis
-# r.set("add1", add1_json)
-# r.set("add2", add2_json)
-
-# # Dictionary initialization
-# transations = [add1,add2]
 transations = []
 
 
@@ -135,9 +120,9 @@ def checkIntegrity():
     for i, transaction_tuple in enumerate(transations):
         recalculated_hash = compute_hash(transaction_tuple)
         stored_hash = transaction_tuple[-1]  # Extract the stored hash from the tuple
-        if recalculated_hash != stored_hash:
-            return f"Integrity check failed for transation {i+1}"
-    return "Integrity check passed for all transations"
+        if recalculated_hash != stored_hash: # Check if the calculated hash is equal to the stored hash
+            return f"Integrity check failed for transation {i+1}" # A transation has been modified
+    return "Integrity check passed for all transations" # All transations have not been modified
 
 
 # Method to compute the hash
