@@ -100,16 +100,16 @@ def addElement():
         add = (person1,person2,time,solde,None)
 
         # Compute the hash and update the tuple
-        add = (*add[:-1],compute_hash(add))
+        previous_hash = compute_hash(add) if len(transations) == 0 else transations[-1][-1]
+        add = (*add[:-1], compute_hash(add, previous_hash))
 
         # Add the element in a tuple
         add_str = json.dumps(add)
         key = "add" + str((len(transations) + 1))
         r.set(key,add_str)
-    
+
         # Add the tuple in the dictionary
         transations.append(add)
-
 
         return "You have successfully added a new element:" + str(add)
     return "You have not added a new element"
