@@ -119,7 +119,7 @@ def addElement():
 def checkIntegrity():
     previous_hash = None
     for i, transaction_tuple in enumerate(transations):
-        recalculated_hash = compute_hash(transaction_tuple, previous_hash)
+        recalculated_hash = compute_hash(transaction_tuple + (previous_hash,))
         stored_hash = transaction_tuple[-1]  # Extract the stored hash from the tuple
         if recalculated_hash != stored_hash: # Check if the calculated hash is equal to the stored hash
             return f"Integrity check failed for transation {i+1}" # A transation has been modified
