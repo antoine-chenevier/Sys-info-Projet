@@ -100,16 +100,16 @@ def addElement():
         add = (person1,person2,time,solde,None)
 
         # Compute the hash and update the tuple
-        previous_hash = compute_hash(add) if len(transations) == 0 else transations[-1][-1]
-        add = (*add[:-1], compute_hash(add + (previous_hash,)))
+        add = (*add[:-1],compute_hash(add))
 
         # Add the element in a tuple
         add_str = json.dumps(add)
         key = "add" + str((len(transations) + 1))
         r.set(key,add_str)
-
+    
         # Add the tuple in the dictionary
         transations.append(add)
+
 
         return "You have successfully added a new element:" + str(add)
     return "You have not added a new element"
@@ -117,14 +117,13 @@ def addElement():
 # Endpoint to check if all the transations hash is correct
 @app.route("/check_integrity", methods=['GET'])
 def checkIntegrity():
-    previous_hash = None
     for i, transaction_tuple in enumerate(transations):
-        recalculated_hash = compute_hash(transaction_tuple + (previous_hash,))
+        recalculated_hash = compute_hash(transaction_tuple)
         stored_hash = transaction_tuple[-1]  # Extract the stored hash from the tuple
         if recalculated_hash != stored_hash: # Check if the calculated hash is equal to the stored hash
             return f"Integrity check failed for transation {i+1}" # A transation has been modified
-        previous_hash = stored_hash
     return "Integrity check passed for all transations" # All transations have not been modified
+
 
 # Method to compute the hash
 def compute_hash(transation_tuple):
