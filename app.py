@@ -56,7 +56,7 @@ def addElement():
         key = "add" + str((len(transations) + 1))
         r.set(key,add_str)
     
-        # Add the tuple in the dictionary
+        # Add the tuple in the dictionary!
         transations.append(add)
 
 
