@@ -42,10 +42,10 @@ def addElement():
         solde=int(request.form.get("solde"))
 
         # Get the current date in second since 2023
-        time = datetime(2023,1,1).timestamp()
+        current_time = time.time()
 
         # Initialize the tupple
-        add = (person1,person2,time,solde,None)
+        add = (person1,person2,current_time,solde,None)
 
         # Compute the hash and update the tuple
         previous_hash = None if len(transations) == 0 else transations[-1][-1]
