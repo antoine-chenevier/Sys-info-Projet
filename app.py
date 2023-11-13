@@ -129,7 +129,7 @@ def checkIntegrity():
 
 
 # Method to compute the hash
-def compute_hash(transaction_tuple, previous_hash):
+def compute_hash(transaction_tuple, previous_hash=None):
     transaction = transaction_tuple[:-1]  # Remove the last element from the transaction tuple which contains the hash 
     data_str = json.dumps(transaction + (previous_hash,), sort_keys=True)  # Convert to JSON object
     return hashlib.sha256(data_str.encode()).hexdigest()  # Use SHA-256 function
