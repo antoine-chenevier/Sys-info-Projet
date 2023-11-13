@@ -101,7 +101,7 @@ def addElement():
 
         # Compute the hash and update the tuple
         previous_hash = compute_hash(add) if len(transations) == 0 else transations[-1][-1]
-        add = (*add[:-1], compute_hash(add, previous_hash))
+        add = (*add[:-1], compute_hash(add + (previous_hash,)))
 
         # Add the element in a tuple
         add_str = json.dumps(add)
