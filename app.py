@@ -42,10 +42,10 @@ def addElement():
         solde=int(request.form.get("solde"))
 
         # Get the current date in second since 2023
-        current_time = time.time()
+        time = datetime(2023,1,1).timestamp()
 
         # Initialize the tupple
-        add = (person1,person2,current_time,solde,None)
+        add = (person1,person2,time,solde,None)
 
         # Compute the hash and update the tuple
         previous_hash = None if len(transations) == 0 else transations[-1][-1]
@@ -65,6 +65,7 @@ def addElement():
 # Endpoint to check if all the transations hash is correct
 @app.route("/check_integrity", methods=['GET'])
 def checkIntegrity():
+    previous_hash = None
     for i, transaction_tuple in enumerate(transations):
         recalculated_hash = compute_hash(transaction_tuple, previous_hash)
         stored_hash = transaction_tuple[-1]  # Extract the stored hash from the tuple
