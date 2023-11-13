@@ -100,7 +100,8 @@ def addElement():
         add = (person1,person2,time,solde,None)
 
         # Compute the hash and update the tuple
-        add = (*add[:-1],compute_hash(add))
+        previous_hash = compute_hash(add) if len(transations) == 0 else transations[-1][-1]
+        add = (*add[:-1], compute_hash(add,previous_hash))
 
         # Add the element in a tuple
         add_str = json.dumps(add)
@@ -118,7 +119,9 @@ def addElement():
 @app.route("/check_integrity", methods=['GET'])
 def checkIntegrity():
     for i, transaction_tuple in enumerate(transations):
-        recalculated_hash = compute_hash(transaction_tuple)
+        if i == 0:
+            previous_hash = transaction_tuple[-1]
+        recalculated_hash = compute_hash(transaction_tuple, previous_hash)
         stored_hash = transaction_tuple[-1]  # Extract the stored hash from the tuple
         if recalculated_hash != stored_hash: # Check if the calculated hash is equal to the stored hash
             return f"Integrity check failed for transation {i+1}" # A transation has been modified
@@ -126,8 +129,7 @@ def checkIntegrity():
 
 
 # Method to compute the hash
-def compute_hash(transation_tuple):
-    transation = transation_tuple[:-1] # Remove the last element from the transtation tuple which contains the hash 
-    data_str = json.dumps(transation, sort_keys = True) # Convert to JSON object
-    return hashlib.sha256(data_str.encode()).hexdigest() # Use SHA-256 function
-
+def compute_hash(transaction_tuple, previous_hash):
+    transaction = transaction_tuple[:-1]  # Remove the last element from the transaction tuple which contains the hash 
+    data_str = json.dumps(transaction + (previous_hash,), sort_keys=True)  # Convert to JSON object
+    return hashlib.sha256(data_str.encode()).hexdigest()  # Use SHA-256 function
