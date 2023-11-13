@@ -117,13 +117,14 @@ def addElement():
 # Endpoint to check if all the transations hash is correct
 @app.route("/check_integrity", methods=['GET'])
 def checkIntegrity():
+    previous_hash = None
     for i, transaction_tuple in enumerate(transations):
-        recalculated_hash = compute_hash(transaction_tuple)
+        recalculated_hash = compute_hash(transaction_tuple, previous_hash)
         stored_hash = transaction_tuple[-1]  # Extract the stored hash from the tuple
         if recalculated_hash != stored_hash: # Check if the calculated hash is equal to the stored hash
             return f"Integrity check failed for transation {i+1}" # A transation has been modified
+        previous_hash = stored_hash
     return "Integrity check passed for all transations" # All transations have not been modified
-
 
 # Method to compute the hash
 def compute_hash(transation_tuple):
