@@ -48,7 +48,7 @@ def addElement():
         add = (person1,person2,time,solde,None)
 
         # Compute the hash and update the tuple
-        previous_hash = None if len(transations) == 0 else transations[-1][-1]
+        previous_hash = None if len(transations) == 0 else transations[-1][-1] # Get the previous hash (skip if its the first element in the transations list)
         add = (*add[:-1], compute_hash(add,previous_hash))  # Compute the hash after adding the previous_hash
 
         # Add the element in a tuple
@@ -70,8 +70,10 @@ def checkIntegrity():
         recalculated_hash = compute_hash(transaction_tuple, previous_hash)
         stored_hash = transaction_tuple[-1]  # Extract the stored hash from the tuple
         if recalculated_hash != stored_hash: # Check if the calculated hash is equal to the stored hash
-            return f"Integrity check failed for transation {i+1}" # A transation has been modified
-    return "Integrity check passed for all transations" # All transations have not been modified
+            return f"Integrity check failed for transaction {i+1}" # A transaction has been modified
+        previous_hash = recalculated_hash  # Update previous_hash for the next iteration
+    return "Integrity check passed for all transactions" # All transactions have not been modified
+
 # Method to compute the hash
 def compute_hash(transaction_tuple, previous_hash=None):
     transaction = list(transaction_tuple[:-1])  # Remove the last element from the transaction tuple which contains the hash 

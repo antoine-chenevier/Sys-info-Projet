@@ -195,3 +195,42 @@ Successfully deleted transation: ["christian", "enzo", 1672527600.0, 5221, "8b31
 
 After running this script we check again the display list endpoint and we will not find the transaction listed above 
 ![image](https://github.com/antoine-chenevier/Sys-info-Projet/assets/117630923/cd50feb5-974c-4609-8ca4-5819da1d173d)
+
+## Verifing the previous attack doesn't work 
+
+After changing the way we create the hash functions in our transations systems we will run the attack from the exercise 8 to test if the attack still works
+
+First we verify that the check_integrity works on the current list we have
+
+Here is the list of transations we have:
+
+```bash
+christian@LAPTOP-179R2RO7:/mnt/d/VSCode/Sys-info-Projet$ curl -X GET http://localhost:5000/display_list
+[('justin', 'antoine', 1672527600.0, 1000, 'a77898c497a60f295ca77558f90aea77bd1289c0b900fe49e9cace58638fdc97'), ('justin', 'christian', 1672527600.0, 150, '6da5fc48eb428479ad9d64693ae4328bfe9844612f366468860073a0ec419896'), ('calvin', 'christian', 1672527600.0, 30, 'e18846e06e5ad29128faada91d2d6cf7756f9d0732f7d2316da67d9c83516dd6')]
+```
+
+Then we verify the integrity of this list of transations:
+
+```bash
+christian@LAPTOP-179R2RO7:/mnt/d/VSCode/Sys-info-Projet$ curl -X GET http://localhost:5000/check_integrity
+Integrity check passed for all transactions
+```
+
+### Launching the attack 
+
+Then we launch the attack script in the tests folder:
+
+
+```bash
+christian@LAPTOP-179R2RO7:/mnt/d/VSCode/Sys-info-Projet/tests$ python3 Ex8_Delete_transactions.py 
+Successfully deleted transation: ["calvin", "christian", 1672527600.0, 30, "e18846e06e5ad29128faada91d2d6cf7756f9d0732f7d2316da67d9c83516dd6"] from the DB
+```
+
+As observed we have deleted a transation from the transations list so let's verify if the check_integrity endpoint will detect error in this transations list:
+
+```bash
+christian@LAPTOP-179R2RO7:/mnt/d/VSCode/Sys-info-Projet/tests$ curl -X GET http://localhost:5000/check_integrity
+Integrity check failed for transaction 1
+```
+
+as we can see the check integrity failed since it calculated the hash for each element in the transations list and compared the values between the stored and the current values and detected a difference between the two.
