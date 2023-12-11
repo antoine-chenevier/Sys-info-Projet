@@ -11,6 +11,8 @@ r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
 # Get the current date in second since 01-01-2023, add seconds and milliseconds
 current_time = time.time()
+
+# Initialize the dictionary
 transations = [] 
 
 
@@ -47,7 +49,7 @@ def addElement():
         add = (person1,person2,time,solde,None)
 
         # Compute the hash and update the tuple
-        
+
         # Get the previous hash (skip if its the first element in the transations list)
         previous_hash = None if len(transations) == 0 else transations[-1][-1] 
 
