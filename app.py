@@ -8,7 +8,6 @@ import hashlib
 app = Flask(__name__)
 
 r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
-r1 = redis.Redis(host='localhost', port=6379, db=1,decode_responses=True)
 
 # Get the current date in second since 01-01-2023, add seconds and milliseconds
 current_time = time.time()
@@ -27,7 +26,7 @@ def getList():
                     transation = json.loads(r.get(key))
                     transations.append(transation)
        
-        # Sort the dictionary by date
+        # Return the list
         return str(transations)
 
 
@@ -48,8 +47,12 @@ def addElement():
         add = (person1,person2,time,solde,None)
 
         # Compute the hash and update the tuple
-        previous_hash = None if len(transations) == 0 else transations[-1][-1] # Get the previous hash (skip if its the first element in the transations list)
-        add = (*add[:-1], compute_hash(add,previous_hash))  # Compute the hash after adding the previous_hash
+        
+        # Get the previous hash (skip if its the first element in the transations list)
+        previous_hash = None if len(transations) == 0 else transations[-1][-1] 
+
+        # Compute the hash after adding the previous_hash
+        add = (*add[:-1], compute_hash(add,previous_hash))  
 
         # Add the element in a tuple
         add_str = json.dumps(add)
@@ -62,20 +65,39 @@ def addElement():
 
         return "You have successfully added a new element:" + str(add)
     return "You have not added a new element"
+
 # Endpoint to check if all the transations hash is correct
 @app.route("/check_integrity", methods=['GET'])
 def checkIntegrity():
+
     previous_hash = None
     for i, transaction_tuple in enumerate(transations):
-        recalculated_hash = compute_hash(transaction_tuple, previous_hash)
-        stored_hash = transaction_tuple[-1]  # Extract the stored hash from the tuple
-        if recalculated_hash != stored_hash: # Check if the calculated hash is equal to the stored hash
-            return f"Integrity check failed for transaction {i+1}" # A transaction has been modified
-        previous_hash = recalculated_hash  # Update previous_hash for the next iteration
-    return "Integrity check passed for all transactions" # All transactions have not been modified
 
-# Method to compute the hash
+        recalculated_hash = compute_hash(transaction_tuple, previous_hash)
+        
+        # Extract the stored hash from the tuple
+        stored_hash = transaction_tuple[-1]  
+        
+        # Check if the calculated hash is equal to the stored hash
+        if recalculated_hash != stored_hash: 
+
+            # A transaction has been modified
+            return f"Integrity check failed for transaction {i+1}" 
+        
+        # Update previous_hash for the next iteration
+        previous_hash = recalculated_hash  
+
+        # All transactions have not been modified
+    return "Integrity check passed for all transactions" 
+
+# Method to compute the hash 
 def compute_hash(transaction_tuple, previous_hash=None):
-    transaction = list(transaction_tuple[:-1])  # Remove the last element from the transaction tuple which contains the hash 
-    data_str = json.dumps(transaction + [previous_hash], sort_keys=True)  # Convert to JSON object
-    return hashlib.sha256(data_str.encode()).hexdigest()  # Use SHA-256 function
+
+    # Remove the last element from the transaction tuple which contains the hash 
+    transaction = list(transaction_tuple[:-1])  
+
+    # Convert to JSON object and sort the keys
+    data_str = json.dumps(transaction + [previous_hash], sort_keys=True)  
+
+    # Use SHA-256 function to compute the hash
+    return hashlib.sha256(data_str.encode()).hexdigest()  
