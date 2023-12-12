@@ -4,6 +4,8 @@ import time
 import redis
 import json
 import hashlib
+import rsa
+from flask import jsonify
 
 app = Flask(__name__)
 
@@ -13,7 +15,7 @@ r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 current_time = time.time()
 
 # Initialize the dictionary
-transations = [] 
+transactions = [] 
 
 
 # Function to return all of the dictionary
@@ -21,22 +23,25 @@ transations = []
 def getList():
     if request.method == 'GET':
 
-        # Load transations from the database ONLY THE FIRST TIME
-        if len(transations) == 0:
+        # Load transactions from the database ONLY THE FIRST TIME
+        if len(transactions) == 0:
              for key in r.keys():
                 if key:
                     transation = json.loads(r.get(key))
-                    transations.append(transation)
+                    transactions.append(transation)
        
         # Return the list
-        return str(transations)
+        return str(transactions)
 
 
-# Function to add an element in the dictionary
-@app.route("/add_element/", methods=['POST','GET'])
+# Générer une paire de clés (publique et privée)
+(pubkey, privkey) = rsa.newkeys(512)
+
+# Fonction pour ajouter un élément à la liste
+@app.route("/add_element", methods=['POST'])
 def addElement():
     if request.method == 'POST':
-
+     
         # Get the data from the form
         person1=str(request.form.get("p1"))    
         person2=str(request.form.get("p2"))
@@ -45,35 +50,37 @@ def addElement():
         # Get the current date in second since 2023
         time = datetime(2023,1,1).timestamp()
 
-        # Initialize the tupple
-        add = (person1,person2,time,solde,None)
+        # Initialize the dictionary
+        add = {
+            'person1': person1,
+            'person2': person2,
+            'time': time,
+            'solde': solde,
+            'signature': None
+        }
 
-        # Compute the hash and update the tuple
+        # Signer la transaction avec la clé privée de l'expéditeur
+        signature = rsa.sign(json.dumps(add).encode(), privkey, 'SHA-256')
 
-        # Get the previous hash (skip if its the first element in the transations list)
-        previous_hash = None if len(transations) == 0 else transations[-1][-1] 
+        # Ajouter la signature à la transaction
+        add['signature'] = signature.hex()
 
-        # Compute the hash after adding the previous_hash
-        add = (*add[:-1], compute_hash(add,previous_hash))  
+        # Ajouter la transaction à la liste des transactions
+        transactions.append(add)
 
-        # Add the element in a tuple
-        add_str = json.dumps(add)
-        key = f"{person1}_{person2}"
-        r.set(key,add_str)
-    
-        # Add the tuple in the dictionary!
-        transations.append(add)
+        # Stocker la transaction dans la base de données Redis
+        r.set(hashlib.sha256(json.dumps(add).encode()).hexdigest(), json.dumps(add))
 
-
-        return "You have successfully added a new element:" + str(add)
+        # Retourner une réponse
+        return jsonify({'message': 'Transaction ajoutée avec succès !'}), 200
     return "You have not added a new element"
 
-# Endpoint to check if all the transations hash is correct
+# Endpoint to check if all the transactions hash is correct
 @app.route("/check_integrity", methods=['GET'])
 def checkIntegrity():
 
     previous_hash = None
-    for i, transaction_tuple in enumerate(transations):
+    for i, transaction_tuple in enumerate(transactions):
 
         recalculated_hash = compute_hash(transaction_tuple, previous_hash)
         
