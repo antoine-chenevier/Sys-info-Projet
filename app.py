@@ -11,7 +11,6 @@ r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 r1 = redis.Redis(host='localhost', port=6379, db=1,decode_responses=True)
 
 # Get the current date in second since 01-01-2023, add seconds and milliseconds
-current_time = time.time()
 transations = [] 
 
 
@@ -53,7 +52,7 @@ def addElement():
 
         # Add the element in a tuple
         add_str = json.dumps(add)
-        key = "add" + str((len(transations) + 1))
+        key = f"{person1}_{person2}"
         r.set(key,add_str)
     
         # Add the tuple in the dictionary!
