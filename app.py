@@ -86,8 +86,14 @@ def checkIntegrity():
         # Get the current transaction
         current_transaction = transactions[i]
 
-        # Check if the current transaction signature is correct
-        if rsa.verify(json.dumps(current_transaction).encode(), bytes.fromhex(current_transaction['signature']), pubkey) == False:
-            return "La signature de la transaction " + str(i) + " est incorrecte"
+        # Check if the current transaction is a dictionary with a 'signature' key
+        if isinstance(current_transaction, dict) and 'signature' in current_transaction:
+            # Check if the current transaction signature is correct
+            try:
+                rsa.verify(json.dumps(current_transaction).encode(), bytes.fromhex(current_transaction['signature']), pubkey)
+            except rsa.VerificationError:
+                return "La signature de la transaction " + str(i) + " est incorrecte"
+        else:
+            return "La transaction " + str(i) + " n'est pas un dictionnaire avec une clé 'signature'"
 
     return "Toutes les transactions rsa sont correctes"
