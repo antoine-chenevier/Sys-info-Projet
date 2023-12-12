@@ -39,7 +39,7 @@ def getList():
 (pubkey, privkey) = rsa.newkeys(512)
 
 # Fonction pour ajouter un élément à la liste
-@app.route("/add_element", methods=['POST'])
+@app.route("/add_element/", methods=['POST','GET'])
 def addElement():
 
     if request.method == 'POST':
@@ -74,11 +74,11 @@ def addElement():
         r.set(hashlib.sha256(json.dumps(add).encode()).hexdigest(), json.dumps(add))
 
         # Retourner une réponse
-        return jsonify({'message': 'Transaction ajoutée avec succès !'}), 200
+        return jsonify({'message': 'Transaction ajoutée avec succes !'}), 200
     return "You have not added a new element"
 
 # Endpoint to check if all the transactions hash is correct
-@app.route("/check_integrity", methods=['GET'])
+@app.route("/check_integrity/", methods=['GET'])
 def checkIntegrity():
 
     for i in range(len(transactions)):
