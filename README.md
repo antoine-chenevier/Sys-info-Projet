@@ -101,13 +101,13 @@ Function to add an element in the dictionary
 ### Route `check_integrity`
 
 ```python {"id":"01HHDEBE0MGX2DD7V6XJGA3CKS"}
-@app.route("/check_integrity", methods=['GET'])
+@app.route("/check_integrity/", methods=['GET'])
 def checkIntegrity():
     ...
 ```
 
 ```bash {"id":"01HHDEBE0MGX2DD7V6XJNE3K6T"}
-curl -X GET http://localhost:5000/check_integrity
+curl -X GET http://localhost:5000/check_integrity/
 
 ```
 
