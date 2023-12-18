@@ -74,18 +74,8 @@ def addElement():
 
         
 
-<<<<<<< HEAD
-        # Add the element in a tuple
-        add_str = json.dumps(add)
-        key = f"{person1}_{person2}"
-        r.set(key,add_str)
-    
-        # Add the tuple in the dictionary!
-        transations.append(add)
-=======
         # Stocker la transaction dans la base de données Redis
         r.set(hashlib.sha256(json.dumps(add).encode()).hexdigest(), json.dumps(add))
->>>>>>> v4-branche
 
         # Retourner une réponse
         return jsonify({'message': 'Transaction ajoutée avec succes !'}), 200
