@@ -14,9 +14,12 @@ email antoine.chenevier01@gmail.com
 christian Hasbani
 email christian_hasbani@etu.u-bourgogne.fr
 
-# My Flask Application
+# Flask Application
 
-This is a simple Flask application.
+This is a flask application to run it you can use the following command:
+```bash
+flask run
+```
 
 ## Getting Started
 
@@ -130,6 +133,11 @@ Here we will use a python scripts saved in the tests folder to connect to the re
 
 We start by running the python file in tests directory
 
+```bash {"id":"01HHDEBE0MGX2DD7V6XRMA5WNC"}
+python3 Ex4_attack_script.py
+
+```
+
 Then we connect to the redis DB
 
 ```bash {"id":"01HHDEBE0MGX2DD7V6XP2TGG2J"}
@@ -142,11 +150,6 @@ Then we check the value of address 1 for example
 ```bash {"id":"01HHDEBE0MGX2DD7V6XR1JH7J4"}
 127.0.0.1:6379> GET add1
 "[\"Antoine\", \"Christian\", 1672527600.0, 5]"
-
-```
-
-```bash {"id":"01HHDEBE0MGX2DD7V6XRMA5WNC"}
-python3 Ex4_attack_script.py
 
 ```
 
@@ -286,3 +289,7 @@ Integrity check failed for transaction 1
 ```
 
 as we can see the check integrity failed since it calculated the hash for each element in the transations list and compared the values between the stored and the current values and detected a difference between the two.
+
+### Crypography in V4
+Here we want to use asymetric cryptography to improve further more the security in our system and here is small figure to describe it simply
+

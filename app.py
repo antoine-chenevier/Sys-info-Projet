@@ -18,6 +18,10 @@ current_time = time.time()
 # Initialize the dictionary
 transactions = [] 
 
+# Générer une paire de clés (publique et privée)
+(pubkey, privkey) = rsa.newkeys(512)
+
+
 
 # Function to return all of the dictionary
 @app.route("/display_list", methods=['GET'])
@@ -34,9 +38,6 @@ def getList():
         # Return the list
         return str(transactions)
 
-
-# Générer une paire de clés (publique et privée)
-(pubkey, privkey) = rsa.newkeys(512)
 
 # Fonction pour ajouter un élément à la liste
 @app.route("/add_element/", methods=['POST','GET'])
@@ -57,18 +58,21 @@ def addElement():
             'person1': person1,
             'person2': person2,
             'time': time,
-            'solde': solde,
-            'signature': None
+            'solde': solde
         }
 
-        # Signer la transaction avec la clé privée de l'expéditeur
-        signature = rsa.sign(json.dumps(add).encode(), privkey, 'SHA-256')
+        # Sign the transaction with the sender's private key
+        # signature = r.set(hashlib.sha256(json.dumps(add).encode()).hexdigest(), json.dumps(add))
 
-        # Ajouter la signature à la transaction
-        add['signature'] = signature.hex()
+        message = json.dumps(add, sort_keys=True).encode() # Convert the transation to a JSON string
+        hash = hashlib.sha256(message).digest() # Create a hash of the message
+        signature = rsa.sign(hash,privkey,'SHA-256') # Sign the hash with the private key
+        signature_hex = signature.hex() # Convert the signature to hex
+        add['signature'] = signature_hex # Add the signature to the transaction
+        add['hash'] = hash.hex() # Add the hash to the transaction
+        transactions.append(add) # Ajouter la transaction à la liste des transactions
 
-        # Ajouter la transaction à la liste des transactions
-        transactions.append(add)
+        
 
         # Stocker la transaction dans la base de données Redis
         r.set(hashlib.sha256(json.dumps(add).encode()).hexdigest(), json.dumps(add))
@@ -86,8 +90,13 @@ def checkIntegrity():
         # Get the current transaction
         current_transaction = transactions[i]
 
-        # Check if the current transaction signature is correct
-        if rsa.verify(json.dumps(current_transaction).encode(), bytes.fromhex(current_transaction['signature']), pubkey) == False:
-            return "La signature de la transaction " + str(i) + " est incorrecte"
+        # Get the parts of the transaction that were signed
+        signed_data = {key: current_transaction[key] for key in current_transaction if key != 'signature'}
+        try:
+            # Verify the signature
+            rsa.verify(bytes.fromhex(current_transaction['hash']),bytes.fromhex(current_transaction['signature']),pubkey)
+        except rsa.pkcs1.VerificationError:
+            print("Verification failed")
+            return jsonify({"error": "Integrity check failed"}), 400
 
     return "Toutes les transactions rsa sont correctes"
