@@ -293,3 +293,24 @@ as we can see the check integrity failed since it calculated the hash for each e
 ### Crypography in V4
 Here we want to use asymetric cryptography to improve further more the security in our system and here is small figure to describe it simply
 
+![image](https://github.com/antoine-chenevier/Sys-info-Projet/assets/117630923/365b9f6d-9f2f-4fa9-8949-933670eb59db)
+
+Here we can see that we need to use a public key and a private key or secret key when signing and verifying the data.
+So we make some changes to the "add_element" endpoint and we change the "check_integrity" endpoint.
+After adding these changes we can check if this works by testing our endpoints:
+First here is the "display_list" endpoint:
+
+```bash
+christian@LAPTOP-179R2RO7:/mnt/d/VSCode/Sys-info-Projet$
+curl -X GET http://localhost:5000/display_list
+[{'person1': 'justin', 'person2': 'antoine', 'time': 1672527600.0, 'solde': 10, 'signature': '4e3a1593b481c8f7043591847797991d4e65f1571b3555219a915b2541988a48447565dda396aae58a7597dbd0ae90224537e6bffa56c6829a94e240d4c89f9c', 'hash': 'c03c567196451a5210a148cf52c2f2294dfc9a7aed02495019648c805a976b59'}, {'person1': 'antoine', 'person2': 'christian', 'time': 1672527600.0, 'solde': 10, 'signature': '042b9eba6db6fa5e364642ebb07e0f4f69d60f681bcf1909edab385c7ed82fb361dc61ef64ba837264cac8a01264a82a25cdb79cdfc5ee63d7ad38b704004649', 'hash': '79388500cf1aa8089757934df38a8e0ed60ba1598b334110bd8a312ea64c3f16'}]christi
+```
+
+we test our "check_integrity" endpoint:
+
+```bash
+christian@LAPTOP-179R2RO7:/mnt/d/VSCode/Sys-info-Projet$ curl -X GET http://localhost:5000/check_integrity/
+Toutes les transactions rsa sont correctes
+```
+
+So, as we can see the transations were signed at creation and verified by a public key at the "check_integrity" endpoint.
