@@ -31,7 +31,7 @@ You need to have Python and Flask installed on your machine. You can install Fla
 
 ```bash {"id":"01HHEGG70K8ZBHGD5T9T0YH7DF"}
 pip install flask
-
+```
 ## curl
 
 Here are examples of `curl` commands to access the different routes in [app.py](./app.py)
