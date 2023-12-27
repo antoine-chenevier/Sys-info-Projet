@@ -24,10 +24,16 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-You need to have Python and Flask installed on your machine. You can install Flask with pip:
+You need to have Python and all the requirements installed on your machine. 
 
-```bash {"id":"01HHEGG70K8ZBHGD5T9T0YH7DF"}
-pip install flask
+```bash
+pip install -r requirements.txt
+```
+## Clone the project
+
+git clone https://github.com/antoine-chenevier/
+
+## Run the application 
 
 ## curl
 
