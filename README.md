@@ -34,10 +34,12 @@ pip install -r requirements.txt
 ```
 ## Clone the project
 
-git clone https://github.com/antoine-chenevier/
+git clone https://github.com/antoine-chenevier/Sys-info-Projet
 
 ## Run the application 
-
+```bash
+flask run
+```
 ## curl
 
 Here are examples of `curl` commands to access the different routes in [app.py](./app.py)
