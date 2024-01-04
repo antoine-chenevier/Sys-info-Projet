@@ -8,11 +8,17 @@ runme:
 
 # Auteur
 
-antoine chenevier
+**antoine chenevier**
+
 email antoine.chenevier01@gmail.com
 
-christian Hasbani
+github https://github.com/antoine-chenevier
+
+**christian Hasbani**
+
 email christian_hasbani@etu.u-bourgogne.fr
+
+github https://github.com/ChristianHasbani
 
 ## Getting Started
 
@@ -292,5 +298,20 @@ Integrity check failed for transaction 1
 as we can see the check integrity failed since it calculated the hash for each element in the transations list and compared the values between the stored and the current values and detected a difference between the two.
 
 ### Crypography in V4
-Here we want to use asymetric cryptography to improve further more the security in our system and here is small figure to describe it simply
+In our system, we use asymmetric cryptography to enhance the security of transactions. Asymmetric cryptography, also known as public key cryptography, uses a pair of keys: a public key, which can be freely shared, and a private key, which is kept secret.
+
+Each transaction is digitally signed using the sender's private key. This signature can then be verified by anyone using the sender's public key, thus ensuring that the transaction has not been tampered with in transit and that it indeed comes from the sender.
+
+In our system, we use the `rsa` library to generate the keys and perform the signing and verification. Here's an example of code showing how a transaction is signed:
+
+```python
+signature = rsa.sign(json.dumps(transaction).encode(), privkey, 'SHA-256')
+transaction['signature'] = signature.hex()
+
+try:
+  rsa.verify(json.dumps(transaction).encode(), bytes.fromhex(transaction['signature']), pubkey)
+except rsa.VerificationError:
+  print("The transaction's signature is incorrect")
+  ```
+
 
