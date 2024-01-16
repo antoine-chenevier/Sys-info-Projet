@@ -314,4 +314,7 @@ except rsa.VerificationError:
   print("The transaction's signature is incorrect")
   ```
 
+Here we can see that if the transations list has not been modified we can see the following message
+
+![image](https://github.com/antoine-chenevier/Sys-info-Projet/assets/117630923/030d11f2-fc09-45a4-8750-ea3d8667cae5)
 
