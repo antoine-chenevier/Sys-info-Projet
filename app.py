@@ -65,14 +65,13 @@ def addElement():
         # signature = r.set(hashlib.sha256(json.dumps(add).encode()).hexdigest(), json.dumps(add))
 
         message = json.dumps(add, sort_keys=True).encode() # Convert the transation to a JSON string
-        hash = hashlib.sha256(message).digest() # Create a hash of the message
+        hash = hashlib.sha256(message).digest()# Create a hash of the message
         signature = rsa.sign(hash,privkey,'SHA-256') # Sign the hash with the private key
         signature_hex = signature.hex() # Convert the signature to hex
         add['signature'] = signature_hex # Add the signature to the transaction
         add['hash'] = hash.hex() # Add the hash to the transaction
         transactions.append(add) # Ajouter la transaction à la liste des transactions
 
-        
 
         # Stocker la transaction dans la base de données Redis
         r.set(hashlib.sha256(json.dumps(add).encode()).hexdigest(), json.dumps(add))

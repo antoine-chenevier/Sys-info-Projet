@@ -16,7 +16,7 @@ for key in transaction_keys:
     existing_transaction_val = redis_client.get(key) # Get each transation in the DB
     if existing_transaction_val:
         existing_transaction = json.loads(existing_transaction_val)
-        new_transaction_amout = random.randrange(0,9999) # Change the current transtaion amount to a random value
+        new_transaction_amout = 8888 # Change the current transtaion amount to a random value
         existing_transaction[3] = new_transaction_amout # Modify the transation amount
         modified_transaction_val = json.dumps(existing_transaction)
         redis_client.set(key, modified_transaction_val) # Set the new transation amount
